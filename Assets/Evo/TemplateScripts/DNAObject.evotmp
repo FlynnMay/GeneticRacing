@@ -1,0 +1,9 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using Evo;
+
+[CreateAssetMenu(fileName = "DNAObject", menuName = "EvoCustom/DNATypes/EvoObjectDNA")]
+public class EvoDNAObject : DNA<object>
+{
+}

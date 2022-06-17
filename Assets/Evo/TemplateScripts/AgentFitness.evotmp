@@ -1,0 +1,15 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using Evo;
+
+[CreateAssetMenu(fileName = "Custom Fitness Function", menuName = "EvoCustom/FitnessFunctions/CustomFitness")]
+public class CustomFitnessFunction : FitnessFunction
+{
+    //Returns the fitness value, the final value must be between 0 and 1.
+    public override float GetValue(EvolutionAgent agent)
+    {
+        float value = 1;
+        return 1.0f / value;
+    }
+}
