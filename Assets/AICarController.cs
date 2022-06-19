@@ -28,12 +28,14 @@ public class AICarController : MonoBehaviour
     public float[] rotations;
 
     public float[] speeds;
-    public float maxSpeed = 100;
+    public float maxSpeed = 100.0f;
     public int speedCount = 8;
     event Action onLerpComplete;
 
     [Range(0, 1)]
     public float timerMax = 0.2f;
+
+    float lifetime = 0;
 
     void Start()
     {
@@ -73,6 +75,7 @@ public class AICarController : MonoBehaviour
 
         agent.onResetEvent.AddListener(() =>
         {
+            lifetime = 0;
             checkpointManager?.ResetCheckpointIndex(this);
             genomeRotIndex = 0;
             genomeSpeedIndex = agent.DNA.Genes.Length / 2;
@@ -133,6 +136,8 @@ public class AICarController : MonoBehaviour
 
         if (!agent.IsAlive)
             return;
+
+        lifetime += Time.deltaTime;
 
         float[] genes = agent.DNA.Genes.Cast<float>().ToArray();
 
@@ -200,7 +205,9 @@ public class AICarController : MonoBehaviour
         if (other.CompareTag("Destination"))
         {
             if (agent.Score >= scoreThreshold)
+            {
                 agent.IsAlive = false;
+            }
         }
 
         if (other.CompareTag("Wall"))
