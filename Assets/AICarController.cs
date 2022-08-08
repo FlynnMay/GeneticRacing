@@ -30,12 +30,13 @@ public class AICarController : MonoBehaviour
     public float[] speeds;
     public float maxSpeed = 100.0f;
     public int speedCount = 8;
-    event Action onLerpComplete;
 
     [Range(0, 1)]
     public float timerMax = 0.2f;
 
     float lifetime = 0;
+
+    Vector3 targetPos;
 
     void Start()
     {
@@ -75,58 +76,28 @@ public class AICarController : MonoBehaviour
 
         agent.onResetEvent.AddListener(() =>
         {
+            //StopAllCoroutines();
             lifetime = 0;
             checkpointManager?.ResetCheckpointIndex(this);
             genomeRotIndex = 0;
             genomeSpeedIndex = agent.DNA.Genes.Length / 2;
             timer = timerMax;
-            StopAllCoroutines();
             transform.position = startPos;
             transform.rotation = startRot;
-            StartCoroutine(StartLerpWhenDNAFound());
+            StartCoroutine(StartMovementOnDNAFound());
         });
-
-        onLerpComplete += AICarController_onLerpComplete;
-        StartCoroutine(StartLerpWhenDNAFound());
+        StartCoroutine(StartMovementOnDNAFound());
     }
 
-    void AICarController_onLerpComplete()
+    private IEnumerator StartMovementOnDNAFound()
     {
-        genomeRotIndex++;
-        genomeSpeedIndex++;
-        timer = timerMax;
+        yield return new WaitUntil(() => agent.DNA != null);
 
-        float[] genes = agent.DNA.Genes.Cast<float>().ToArray();
-
-        StartLerp(genes);
-    }
-
-    IEnumerator StartLerpWhenDNAFound()
-    {
-        while (agent.DNA == null)
-            yield return null;
-
-        float[] genes = agent.DNA.Genes.Cast<float>().ToArray();
-
-        StartLerp(genes);
-    }
-
-    private void StartLerp(float[] genes)
-    {
-        if (genomeRotIndex < genes.Length / 2)
-        {
-            float y = GetRotationFromGenes(genes);
-            Quaternion rot = Quaternion.Euler(0, y, 0);
-            Vector3 dir = rot * Vector3.forward;
-            Vector3 target = transform.position + dir * 5;
-            StartCoroutine(Lerp(target, rot, speed));
-        }
+        OnTargetReached();
     }
 
     void Update()
     {
-        Debug.Log(agent.Score);
-
         if (agent.DNA == null || group == null)
             return;
 
@@ -146,13 +117,36 @@ public class AICarController : MonoBehaviour
             agent.IsAlive = false;
             return;
         }
+    }
 
+    private void FixedUpdate()
+    {
+        if (!agent.IsAlive)
+            return;
+
+        if (Vector3.Distance(targetPos, transform.position) <= 0.1f)
+            OnTargetReached();
+
+        transform.position = Vector3.MoveTowards(transform.position, targetPos, speed * Time.fixedDeltaTime);
+    }
+
+    private void OnTargetReached()
+    {
+        genomeRotIndex++;
+        genomeSpeedIndex++;
+        timer = timerMax;
+
+        float[] genes = agent.DNA.Genes.Cast<float>().ToArray();
+
+        //CalculateSpeedFromGenes(genes);
+        speed = 5.0f;
         float y = GetRotationFromGenes(genes);
-        CalculateSpeedFromGenes(genes);
 
         Quaternion rot = Quaternion.Euler(0, y, 0);
         Vector3 dir = Vector3.RotateTowards(transform.forward, rot * Vector3.forward, speed * Time.deltaTime, 0.0f);
         transform.rotation = Quaternion.LookRotation(dir);
+
+        targetPos = transform.position + dir;
     }
 
     private void CalculateSpeedFromGenes(float[] genes)
@@ -168,23 +162,6 @@ public class AICarController : MonoBehaviour
         return y;
     }
 
-    IEnumerator Lerp(Vector3 targetPosition, Quaternion targetRotation, float duration)
-    {
-        float timeElapsed = 0.0f;
-        Vector3 startPosition = transform.position;
-        Quaternion startRotation = transform.rotation;
-        while (timeElapsed < duration)
-        {
-            transform.position = Vector3.Lerp(startPosition, targetPosition, timeElapsed / duration);
-            transform.rotation = Quaternion.Lerp(startRotation, targetRotation, timeElapsed / duration);
-            timeElapsed += Time.deltaTime;
-            yield return null;
-        }
-        transform.position = targetPosition;
-        transform.rotation = targetRotation;
-        onLerpComplete?.Invoke();
-    }
-
     public void OnTraversedWrongCheckpoint(int attemptedCheckpoint, int expectedCheckpoint)
     {
         agent.Penalise(3);
@@ -193,11 +170,6 @@ public class AICarController : MonoBehaviour
     public void OnTraversedCorrectCheckpoint(int checkpointIndex)
     {
         agent.Reward(3);
-    }
-
-    private void OnCollisionEnter(Collision collision)
-    {
-
     }
 
     private void OnTriggerEnter(Collider other)
@@ -225,5 +197,19 @@ public class AICarController : MonoBehaviour
             AICheckpoint checkpoint = other.GetComponent<AICheckpoint>();
             checkpoint.CarFound(this);
         }
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        if (agent == null)
+            return;
+
+        if (agent.DNA == null || group == null)
+            return;
+
+        if (!agent.IsAlive)
+            return;
+
+        Gizmos.DrawSphere(targetPos, 0.5f);
     }
 }

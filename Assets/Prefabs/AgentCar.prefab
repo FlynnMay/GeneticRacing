@@ -843,7 +843,7 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1.97, y: 1.42, z: 4.85}
+  m_Size: {x: 1.5977583, y: 1.42, z: 4.2556305}
   m_Center: {x: 0, y: 0.71, z: -0.018977284}
 --- !u!1 &9177549433446428301
 GameObject:
@@ -916,7 +916,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   DNAType: {fileID: 0}
-  defaultDNA: {fileID: 0}
+  defaultDNA: {fileID: 11400000, guid: 47fb598459bf15e438317bbc7f204d08, type: 2}
   group: {fileID: 0}
 --- !u!54 &1383367648816044873
 Rigidbody:
@@ -933,4 +933,4 @@ Rigidbody:
   m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 3
