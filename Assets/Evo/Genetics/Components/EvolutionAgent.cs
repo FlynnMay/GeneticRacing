@@ -72,14 +72,9 @@ namespace Evo
             group = _group;
             DNA = new Genome(size, random, _group, this);
             DNAType = _DNAType;
-
+            
             if (defaultDNA != null)
-            {
-                Type type = defaultDNA.GetType();
-                FieldInfo info = type.GetField("genes");
-                object genes = info.GetValue(defaultDNA);
-                DNA.Genes = ((IEnumerable)genes).Cast<object>().ToArray();
-            }
+                ApplyDefaultDNA();
         }
 
         /// <summary>
@@ -144,6 +139,36 @@ namespace Evo
             float num = value * Mathf.Pow(Mathf.Abs(scoreTemp) / rewardThreshold, rewardImportance) * modifier;
 
             return (Mathf.Clamp(num, -1, 1) + 1) / 2;
+        }
+
+        /// <summary>
+        /// Sets the default DNA then updates the the genes of the current agents DNA
+        /// </summary>
+        /// <param name="DNA"></param>
+        public void SetAndApplyDNA(DNA DNA)
+        {
+            SetDefaultDNA(DNA);
+            ApplyDefaultDNA();
+        }
+
+        /// <summary>
+        /// Sets the defaultDNA, apply using ApplyDefaultDNA
+        /// </summary>
+        /// <param name="DNA"></param>
+        public void SetDefaultDNA(DNA DNA)
+        {
+            defaultDNA = DNA;
+        }
+
+        /// <summary>
+        /// Sets the DNA's Genes using the default DNA
+        /// </summary>
+        public void ApplyDefaultDNA()
+        {
+            Type type = defaultDNA.GetType();
+            FieldInfo info = type.GetField("genes");
+            object genes = info.GetValue(defaultDNA);
+            DNA.Genes = ((IEnumerable)genes).Cast<object>().ToArray();
         }
     }
 }

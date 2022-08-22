@@ -15,7 +15,7 @@ public class AICarController : MonoBehaviour
     int genomeSpeedIndex;
     
     float timer = 0;
-    public float speed;
+    public float speed = 5.0f;
     
     Vector3 startPos;
     Quaternion startRot;
@@ -28,7 +28,7 @@ public class AICarController : MonoBehaviour
     public float[] rotations;
 
     public float[] speeds;
-    public float maxSpeed = 100.0f;
+    float maxSpeed = 100.0f;
     public int speedCount = 8;
 
     [Range(0, 1)]
