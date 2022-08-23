@@ -138,8 +138,6 @@ public class AICarController : MonoBehaviour
 
         float[] genes = agent.DNA.Genes.Cast<float>().ToArray();
 
-        //CalculateSpeedFromGenes(genes);
-        speed = 5.0f;
         float y = GetRotationFromGenes(genes);
 
         Quaternion rot = Quaternion.Euler(0, y, 0);
