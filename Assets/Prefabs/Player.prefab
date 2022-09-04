@@ -827,8 +827,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 081c4b29f8b35224fa44e8ee8c368b68, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  CarName: Player
   sphereRigidbody: {fileID: 6825957367984323671}
-  speed: 85
+  speed: 92.5
   turnSpeed: 150
 --- !u!54 &6444298134799326321
 Rigidbody:

@@ -9,7 +9,7 @@ public class GeneticTitle : MonoBehaviour
 {
     int lastGen = 0;
     public string title;
-    EvolutionGroup group;
+    public EvolutionGroup group;
     TextMeshProUGUI titleMesh;
     public CharFitnessFunction fitnessFunction;
 
@@ -18,8 +18,15 @@ public class GeneticTitle : MonoBehaviour
         group = GetComponent<EvolutionGroup>();
         titleMesh = GetComponent<TextMeshProUGUI>();
 
+        Setup();
+    }
+
+    public void Setup()
+    {
         group.genomeSize = (uint)title.Length;
+        fitnessFunction = (CharFitnessFunction)ScriptableObject.CreateInstance(typeof(CharFitnessFunction));
         fitnessFunction.target = title;
+        group.fitnessFunction = fitnessFunction;
     }
 
     void Update()

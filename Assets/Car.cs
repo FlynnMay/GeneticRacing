@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class Car : MonoBehaviour
 {
+    public string carName = "Car";
     protected bool canMove = true;
     public bool CanMove { get => canMove; set => canMove = value; }
     public bool Finished { get; protected set; } = false;
