@@ -64,6 +64,10 @@ namespace Evo
         [Tooltip("If checked the group will evolve when all agents aren't alive")]
         bool evolveOnExtinction = true;
 
+        [SerializeField]
+        [Tooltip("If checked the group will begin evolving when the monobehaviour function 'Start' is called")]
+        bool beginOnStart = true;
+
         [Header("Agent Configuration")]
         [SerializeField]
         [Tooltip("Used for adding agents to the heirarchy. \nIt is still possible to add agents manually, but this might make things easier")]
@@ -79,7 +83,7 @@ namespace Evo
         [SerializeField]
         [Tooltip("Set this to the total score you would like each agent to get by the time they reach their goal")]
         public int rewardThreshold = 0;
-        
+
         [SerializeField]
         [Tooltip("The greater the importance the more an agent favours higher reward values, the trade off is lower reward values may not be worth enough")]
         [Range(1, 10)]
@@ -109,20 +113,13 @@ namespace Evo
             if (GeneticTime.instance == null && timerSettings.timerType == TimerSettings.TimerType.GeneticTimer)
                 gameObject.AddComponent<GeneticTime>();
 
-            yield return new WaitForEndOfFrame();
-
             random = new Random();
 
-            LoadAgents();
-
-            foreach (EvolutionAgent agent in agents)
+            if (beginOnStart)
             {
-                agent.Init((int)genomeSize, random, agentDNAType, this);
+                yield return new WaitForEndOfFrame();
+                StartEvolving();
             }
-
-            List<Genome> genomes = agents.Select(a => a.DNA).ToList();
-
-            geneticAlgorithm = new EvoGeneticAlgorithm(genomes, (int)genomeSize, random, this, mutationRate, (int)eliteCount);
         }
 
         void LateUpdate()
@@ -152,8 +149,27 @@ namespace Evo
             }
         }
 
+
         /// <summary>
-        /// Call when to move to the next generation
+        /// Call to start evolving the agents
+        /// </summary>
+        public void StartEvolving()
+        {
+            LoadAgents();
+
+            foreach (EvolutionAgent agent in agents)
+            {
+                agent.Init((int)genomeSize, random, agentDNAType, this);
+            }
+
+            List<Genome> genomes = agents.Select(a => a.DNA).ToList();
+
+            geneticAlgorithm = new EvoGeneticAlgorithm(genomes, (int)genomeSize, random, this, mutationRate, (int)eliteCount);
+        }
+
+
+        /// <summary>
+        /// Call to move to the next generation
         /// </summary>
         public void EvolveGeneration()
         {
@@ -183,10 +199,12 @@ namespace Evo
         {
             return valueGenerator.GetType().GetMethod("GetValue").Invoke(valueGenerator, null);
         }
-        
+
         public void LoadAgents()
         {
             agents = GetComponentsInChildren<EvolutionAgent>();
+            foreach (EvolutionAgent agent in agents)
+                agent.ResetAgent();
         }
 
         public void ClearAgents()

@@ -59,6 +59,24 @@ namespace Evo
         /// This the value which is updated when 
         /// </summary>
         public int Score { get; private set; }
+        
+        /// <summary>
+        /// If unchecked the agent will run with out a EvolutionGroup using the Default DNA.
+        /// </summary>
+        [SerializeField]
+        bool training = true;
+
+        private void Awake()
+        {
+            if (training) 
+                return;
+
+            if (defaultDNA == null)
+                throw new Exception("Default DNA cannot be null outside of training.");
+
+            DNA = new Genome(this, 0);
+            ApplyDefaultDNA();
+        }
 
         /// <summary>
         /// Called in EvolutionGroup to initialise the agent
@@ -69,16 +87,19 @@ namespace Evo
         /// <param name="_group"></param>
         public void Init(int size, System.Random random, DNA _DNAType, EvolutionGroup _group)
         {
+            if (!training)
+                throw new Exception("Trying to initialise a non-training agent. Only training agents can be initialised through an EvolutionGroup");
+
             group = _group;
             DNA = new Genome(size, random, _group, this);
             DNAType = _DNAType;
-            
+
             if (defaultDNA != null)
                 ApplyDefaultDNA();
         }
 
         /// <summary>
-        /// Called in Evolve Generation. Resets generation specific information.
+        /// Called in Evolve Generation. Resets generation specific information and tiggers the reset event.
         /// </summary>
         public void ResetAgent()
         {

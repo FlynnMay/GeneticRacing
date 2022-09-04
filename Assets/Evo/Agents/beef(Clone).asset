@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 844a972cef5772842ab6fc2ee9cb09d7, type: 3}
+  m_Name: beef(Clone)
+  m_EditorClassIdentifier: 
+  genes:
+  - 0.2484597
+  - 0.35277158
+  - 0.6339649
+  - 0.5584633
+  - 0.47753853
+  - 0.6601454
+  - 0.71421516
+  - 0.79137945
+  - 0.7755554
+  - 0.8559072
+  - 0.6730797
+  - 0.10728061
+  - 0.5537707
+  - 0.9223447
+  - 0.795442
+  - 0.70739746
+  - 0.91280496
+  - 0.73205256
+  - 0.42509598
+  - 0.07026994
+  - 0.74122965
+  - 0.9269427
+  - 0.0049494505
+  - 0.033104062
+  - 0.15004933
+  - 0.18467784
+  - 0.7963029
+  - 0.11609292
+  - 0.886678
+  - 0.2486589

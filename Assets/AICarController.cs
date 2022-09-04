@@ -1,24 +1,20 @@
 using System.Collections;
 using System.Linq;
-using System.Collections.Generic;
 using UnityEngine;
-using Extensions;
 using Evo;
-using System;
 
 public class AICarController : Car
 {
     public float speed = 5.0f;
     public int rotationCount = 27;
     public float[] rotations;
+
     [Range(0, 1)]
     public float timerMax = 0.2f;
     EvolutionGroup group;
     EvolutionAgent agent;
 
     int genomeRotIndex = 0;
-
-    float timer = 0;
 
     Vector3 startPos;
     Quaternion startRot;
@@ -27,9 +23,6 @@ public class AICarController : Car
     CheckpointManager checkpointManager;
 
     int scoreThreshold;
-
-
-    float lifetime = 0;
 
     Vector3 targetPos;
 
@@ -44,7 +37,6 @@ public class AICarController : Car
         meshRenderers = GetComponentsInChildren<MeshRenderer>();
         agent = GetComponent<EvolutionAgent>();
 
-        timer = timerMax;
         startPos = transform.position;
         startRot = transform.rotation;
 
@@ -62,10 +54,8 @@ public class AICarController : Car
         agent.onResetEvent.AddListener(() =>
         {
             //StopAllCoroutines();
-            lifetime = 0;
             checkpointManager?.ResetCheckpointIndex(this);
             genomeRotIndex = 0;
-            timer = timerMax;
             transform.position = startPos;
             transform.rotation = startRot;
             StartCoroutine(StartMovementOnDNAFound());
@@ -75,7 +65,7 @@ public class AICarController : Car
 
     private IEnumerator StartMovementOnDNAFound()
     {
-        while(agent.DNA == null)
+        while (agent.DNA == null)
             yield return null;
 
         OnTargetReached();
@@ -83,16 +73,15 @@ public class AICarController : Car
 
     void Update()
     {
-        if (agent.DNA == null || group == null)
+        if (agent.DNA == null)
             return;
 
-        foreach (MeshRenderer meshRenderer in meshRenderers)
-            meshRenderer.enabled = group.GetGeneration() > 1 && agent.IsElite;
+        if (agent.DNA.IsTraining)
+            foreach (MeshRenderer meshRenderer in meshRenderers)
+                meshRenderer.enabled = group.GetGeneration() > 1 && agent.IsElite;
 
-        if (!agent.IsAlive)
+        if (!agent.IsAlive || !CanMove)
             return;
-
-        lifetime += Time.deltaTime;
 
         float[] genes = agent.DNA.Genes.Cast<float>().ToArray();
 
@@ -105,7 +94,7 @@ public class AICarController : Car
 
     private void FixedUpdate()
     {
-        if (!agent.IsAlive)
+        if (!agent.IsAlive || !CanMove)
             return;
 
         if (Vector3.Distance(targetPos, transform.position) <= 0.2f)
@@ -117,7 +106,6 @@ public class AICarController : Car
     private void OnTargetReached()
     {
         genomeRotIndex++;
-        timer = timerMax;
 
         float[] genes = agent.DNA.Genes.Cast<float>().ToArray();
 
@@ -149,12 +137,17 @@ public class AICarController : Car
 
     public override void OnTraversedLastCheckpoint()
     {
+        base.OnTraversedLastCheckpoint();
+
         agent.IsAlive = false;
     }
 
 
     private void OnTriggerEnter(Collider other)
     {
+        if (!agent.DNA.IsTraining)
+            return;
+
         if (other.CompareTag("Destination"))
         {
             if (agent.Score >= scoreThreshold)
@@ -166,6 +159,9 @@ public class AICarController : Car
 
     private void OnCollisionEnter(Collision collision)
     {
+        if (!agent.DNA.IsTraining)
+            return;
+
         if (collision.collider.CompareTag("Wall"))
         {
             agent.Penalise();
@@ -176,13 +172,7 @@ public class AICarController : Car
 
     private void OnDrawGizmosSelected()
     {
-        if (agent == null)
-            return;
-
-        if (agent.DNA == null || group == null)
-            return;
-
-        if (!agent.IsAlive)
+        if (agent == null || agent.DNA == null || !agent.IsAlive)
             return;
 
         Gizmos.DrawSphere(targetPos, 0.5f);

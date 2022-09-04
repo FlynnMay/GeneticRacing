@@ -17,6 +17,9 @@ public class PlayerController : Car
 
     private void Update()
     {
+        if(!CanMove)
+            return;
+
         float moveInput = Input.GetAxisRaw("Vertical");
         move = moveInput * ((moveInput > 0) ? speed : speed / 2); 
 
@@ -41,6 +44,8 @@ public class PlayerController : Car
 
     public override void OnTraversedLastCheckpoint()
     {
+        base.OnTraversedLastCheckpoint();
+
         sphereRigidbody.velocity = Vector3.zero;
         speed = 0.0f;
     }

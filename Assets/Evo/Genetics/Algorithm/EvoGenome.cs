@@ -11,10 +11,18 @@ namespace Evo
         public IEvolutionInstructions Instructions { get; private set; }
         public bool IsElite { get; set; }
         public bool IsKing { get; set; }
+        public bool IsTraining { get; private set; }
 
         public EvolutionAgent agent;
         Random random;
 
+        /// <summary>
+        /// Training Constructor
+        /// </summary>
+        /// <param name="size"></param>
+        /// <param name="_random"></param>
+        /// <param name="instructions"></param>
+        /// <param name="_agent"></param>
         public Genome(int size, Random _random, IEvolutionInstructions instructions, EvolutionAgent _agent = null)
         {
             agent = _agent;
@@ -26,16 +34,36 @@ namespace Evo
             {
                 Genes[i] = Instructions.GetEvolutionRandomValue();
             }
+
+            IsTraining = true;
+        }
+        
+        /// <summary>
+        /// Non Training Constructor
+        /// </summary>
+        /// <param name="size"></param>
+        /// <param name="_agent"></param>
+        public Genome(EvolutionAgent _agent, int size = 0)
+        {
+            agent = _agent;
+            Genes = new object[size];
+            IsTraining = false;
         }
 
         public float CalaculateFitness(int index)
         {
+            if (!IsTraining)
+                return 1.0f;
+
             Fitness = Instructions.EvolutionFitnessFunction(this);
             return Fitness;
         }
 
         public Genome Crossover(Genome other)
         {
+            if (!IsTraining)
+                return this;
+
             Genome child = new Genome(Genes.Length, random, Instructions);
 
             // Determine how genes should be copied to the child through the parents
