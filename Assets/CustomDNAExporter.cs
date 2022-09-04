@@ -21,6 +21,10 @@ public class CustomDNAExporter : MonoBehaviour
             return;
 
         if(group.GetBestFitness() >= threshold)
-            group.agents.OrderByDescending(a => a.DNA.Fitness).First().ExportDNA();
+        {
+            EvolutionAgent agent = group.agents.OrderByDescending(a => a.DNA.Fitness).First();
+            agent.name = $"{agent.DNA.Fitness}({group.GetGeneration()})";
+            agent.ExportDNA();
+        }
     }
 }

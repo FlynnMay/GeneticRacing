@@ -10,26 +10,21 @@ public class AICarController : MonoBehaviour
 {
     EvolutionGroup group;
     EvolutionAgent agent;
-    
+
     int genomeRotIndex = 0;
-    int genomeSpeedIndex;
-    
+
     float timer = 0;
     public float speed = 5.0f;
-    
+
     Vector3 startPos;
     Quaternion startRot;
-    
+
     MeshRenderer[] meshRenderers;
     AICheckpointManager checkpointManager;
-    
+
     int scoreThreshold;
     public int rotationCount = 27;
     public float[] rotations;
-
-    public float[] speeds;
-    float maxSpeed = 100.0f;
-    public int speedCount = 8;
 
     [Range(0, 1)]
     public float timerMax = 0.2f;
@@ -41,10 +36,10 @@ public class AICarController : MonoBehaviour
     void Start()
     {
         group = FindObjectOfType<EvolutionGroup>();
-        
+
         if (group != null)
             scoreThreshold = group.rewardThreshold;
-        
+
         checkpointManager = FindObjectOfType<AICheckpointManager>();
         meshRenderers = GetComponentsInChildren<MeshRenderer>();
         agent = GetComponent<EvolutionAgent>();
@@ -54,7 +49,6 @@ public class AICarController : MonoBehaviour
         startRot = transform.rotation;
 
         rotations = new float[rotationCount];
-        speeds = new float[speedCount];
 
         float rotInteval = 360 / rotationCount;
         float rotSum = rotInteval;
@@ -65,22 +59,12 @@ public class AICarController : MonoBehaviour
             rotSum += rotInteval;
         }
 
-        float speedInterval = maxSpeed / speedCount;
-        float speedSum = speedInterval;
-
-        for (int i = 0; i < speedCount; i++)
-        {
-            speeds[i] = speedSum;
-            speedSum += speedInterval;
-        }
-
         agent.onResetEvent.AddListener(() =>
         {
             //StopAllCoroutines();
             lifetime = 0;
             checkpointManager?.ResetCheckpointIndex(this);
             genomeRotIndex = 0;
-            genomeSpeedIndex = agent.DNA.Genes.Length / 2;
             timer = timerMax;
             transform.position = startPos;
             transform.rotation = startRot;
@@ -91,7 +75,8 @@ public class AICarController : MonoBehaviour
 
     private IEnumerator StartMovementOnDNAFound()
     {
-        yield return new WaitUntil(() => agent.DNA != null);
+        while(agent.DNA == null)
+            yield return null;
 
         OnTargetReached();
     }
@@ -101,9 +86,8 @@ public class AICarController : MonoBehaviour
         if (agent.DNA == null || group == null)
             return;
 
-        if (group.GetGeneration() > 1)
-            foreach (MeshRenderer meshRenderer in meshRenderers)
-                meshRenderer.enabled = agent.IsElite;
+        foreach (MeshRenderer meshRenderer in meshRenderers)
+            meshRenderer.enabled = group.GetGeneration() > 1 && agent.IsElite;
 
         if (!agent.IsAlive)
             return;
@@ -112,7 +96,7 @@ public class AICarController : MonoBehaviour
 
         float[] genes = agent.DNA.Genes.Cast<float>().ToArray();
 
-        if (genomeRotIndex >= genes.Length / 2 || genomeSpeedIndex >= genes.Length)
+        if (genomeRotIndex >= genes.Length)
         {
             agent.IsAlive = false;
             return;
@@ -124,7 +108,7 @@ public class AICarController : MonoBehaviour
         if (!agent.IsAlive)
             return;
 
-        if (Vector3.Distance(targetPos, transform.position) <= 0.1f)
+        if (Vector3.Distance(targetPos, transform.position) <= 0.2f)
             OnTargetReached();
 
         transform.position = Vector3.MoveTowards(transform.position, targetPos, speed * Time.fixedDeltaTime);
@@ -133,7 +117,6 @@ public class AICarController : MonoBehaviour
     private void OnTargetReached()
     {
         genomeRotIndex++;
-        genomeSpeedIndex++;
         timer = timerMax;
 
         float[] genes = agent.DNA.Genes.Cast<float>().ToArray();
@@ -145,12 +128,6 @@ public class AICarController : MonoBehaviour
         transform.rotation = Quaternion.LookRotation(dir);
 
         targetPos = transform.position + dir;
-    }
-
-    private void CalculateSpeedFromGenes(float[] genes)
-    {
-        int speedIndex = (int)((genes[genomeSpeedIndex] * (speedCount - 1)) + 0.5f);
-        speed = speeds[speedIndex];
     }
 
     private float GetRotationFromGenes(float[] genes)
@@ -179,13 +156,6 @@ public class AICarController : MonoBehaviour
                 agent.IsAlive = false;
             }
         }
-
-        if (other.CompareTag("Wall"))
-        {
-            agent.Penalise();
-            agent.IsAlive = false;
-            StopAllCoroutines();
-        }
     }
 
     private void OnTriggerExit(Collider other)
@@ -194,6 +164,16 @@ public class AICarController : MonoBehaviour
         {
             AICheckpoint checkpoint = other.GetComponent<AICheckpoint>();
             checkpoint.CarFound(this);
+        }
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.collider.CompareTag("Wall"))
+        {
+            agent.Penalise();
+            agent.IsAlive = false;
+            StopAllCoroutines();
         }
     }
 
