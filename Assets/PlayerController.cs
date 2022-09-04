@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : Car
 {
     public Rigidbody sphereRigidbody;
     public float speed = 200.0f;
@@ -29,5 +29,19 @@ public class PlayerController : MonoBehaviour
     private void FixedUpdate()
     {
         sphereRigidbody.AddForce(transform.forward * move, ForceMode.Acceleration);
+    }
+
+    public override void OnTraversedWrongCheckpoint(int attemptedCheckpoint, int expectedCheckpoint)
+    {
+    }
+
+    public override void OnTraversedCorrectCheckpoint(int checkpointIndex)
+    {
+    }
+
+    public override void OnTraversedLastCheckpoint()
+    {
+        sphereRigidbody.velocity = Vector3.zero;
+        speed = 0.0f;
     }
 }

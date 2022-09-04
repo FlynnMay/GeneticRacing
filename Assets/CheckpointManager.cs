@@ -4,30 +4,30 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AICheckpointManager : MonoBehaviour
+public class CheckpointManager : MonoBehaviour
 {
-    Dictionary<AICarController, int> carCheckpointIndicies = new Dictionary<AICarController, int>();
-    [SerializeField] List<AICheckpoint> checkpoints = new List<AICheckpoint>();
+    Dictionary<Car, int> carCheckpointIndicies = new Dictionary<Car, int>();
+    [SerializeField] List<Checkpoint> checkpoints = new List<Checkpoint>();
 
     private void Awake()
     {
         GameObject checkpointsHolder = GameObject.Find("Checkpoints");
-        checkpoints = checkpointsHolder.GetComponentsInChildren<AICheckpoint>().ToList();
+        checkpoints = checkpointsHolder.GetComponentsInChildren<Checkpoint>().ToList();
 
-        foreach (AICheckpoint checkpoint in checkpoints)
+        foreach (Checkpoint checkpoint in checkpoints)
         {
             checkpoint.SetManager(this);
         }
 
-        AICarController[] allCars = FindObjectsOfType<AICarController>();
+        Car[] allCars = FindObjectsOfType<Car>();
 
-        foreach (AICarController controller in allCars)
+        foreach (Car controller in allCars)
         {
             carCheckpointIndicies.Add(controller, 0);
         }
     }
 
-    public void CarTraversedCheckpoint(AICheckpoint checkpoint, AICarController carController, bool followingPath)
+    public void CarTraversedCheckpoint(Checkpoint checkpoint, Car carController, bool followingPath)
     {
         int lastCheckpoint = carCheckpointIndicies[carController];
         int attemptedCheckpoint = checkpoints.IndexOf(checkpoint) + 1;
@@ -36,16 +36,20 @@ public class AICheckpointManager : MonoBehaviour
         {
             carCheckpointIndicies[carController]++;
             carController.OnTraversedCorrectCheckpoint(attemptedCheckpoint);
+
         }
         else if (attemptedCheckpoint == lastCheckpoint && !followingPath)
         {
             carCheckpointIndicies[carController]--;
             carController.OnTraversedWrongCheckpoint(attemptedCheckpoint, lastCheckpoint + 1);
         }
+
+        if (attemptedCheckpoint == 1 && lastCheckpoint == checkpoints.Count)
+            carController.OnTraversedLastCheckpoint();
     }
 
-    public void ResetCheckpointIndex(AICarController carController)
-    { 
+    public void ResetCheckpointIndex(Car carController)
+    {
         carCheckpointIndicies[carController] = 0;
     }
 }

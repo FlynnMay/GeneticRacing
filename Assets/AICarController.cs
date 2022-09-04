@@ -6,7 +6,7 @@ using Extensions;
 using Evo;
 using System;
 
-public class AICarController : MonoBehaviour
+public class AICarController : Car
 {
     EvolutionGroup group;
     EvolutionAgent agent;
@@ -20,7 +20,7 @@ public class AICarController : MonoBehaviour
     Quaternion startRot;
 
     MeshRenderer[] meshRenderers;
-    AICheckpointManager checkpointManager;
+    CheckpointManager checkpointManager;
 
     int scoreThreshold;
     public int rotationCount = 27;
@@ -40,7 +40,7 @@ public class AICarController : MonoBehaviour
         if (group != null)
             scoreThreshold = group.rewardThreshold;
 
-        checkpointManager = FindObjectOfType<AICheckpointManager>();
+        checkpointManager = FindObjectOfType<CheckpointManager>();
         meshRenderers = GetComponentsInChildren<MeshRenderer>();
         agent = GetComponent<EvolutionAgent>();
 
@@ -137,15 +137,21 @@ public class AICarController : MonoBehaviour
         return y;
     }
 
-    public void OnTraversedWrongCheckpoint(int attemptedCheckpoint, int expectedCheckpoint)
+    public override void OnTraversedWrongCheckpoint(int attemptedCheckpoint, int expectedCheckpoint)
     {
         agent.Penalise(3);
     }
 
-    public void OnTraversedCorrectCheckpoint(int checkpointIndex)
+    public override void OnTraversedCorrectCheckpoint(int checkpointIndex)
     {
         agent.Reward(3);
     }
+
+    public override void OnTraversedLastCheckpoint()
+    {
+        agent.IsAlive = false;
+    }
+
 
     private void OnTriggerEnter(Collider other)
     {
@@ -155,15 +161,6 @@ public class AICarController : MonoBehaviour
             {
                 agent.IsAlive = false;
             }
-        }
-    }
-
-    private void OnTriggerExit(Collider other)
-    {
-        if (other.CompareTag("Checkpoint"))
-        {
-            AICheckpoint checkpoint = other.GetComponent<AICheckpoint>();
-            checkpoint.CarFound(this);
         }
     }
 

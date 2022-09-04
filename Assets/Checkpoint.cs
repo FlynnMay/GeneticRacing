@@ -3,21 +3,21 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AICheckpoint : MonoBehaviour
+public class Checkpoint : MonoBehaviour
 {
-    AICheckpointManager manager;
+    CheckpointManager manager;
 
-    public void SetManager(AICheckpointManager manager)
+    public void SetManager(CheckpointManager manager)
     {
         this.manager = manager;
     }
 
-    public void CarFound(AICarController carController)
+    public void CarFound(Car carController)
     {
         manager.CarTraversedCheckpoint(this, carController, IsOnTheCorrectSide(carController));
     }
 
-    public bool IsOnTheCorrectSide(AICarController carController)
+    public bool IsOnTheCorrectSide(Car carController)
     {
         Vector3 dirToCar = (carController.transform.position - transform.position).normalized;
         float dot = Vector3.Dot(transform.forward, dirToCar);
