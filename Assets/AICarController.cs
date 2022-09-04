@@ -8,13 +8,17 @@ using System;
 
 public class AICarController : Car
 {
+    public float speed = 5.0f;
+    public int rotationCount = 27;
+    public float[] rotations;
+    [Range(0, 1)]
+    public float timerMax = 0.2f;
     EvolutionGroup group;
     EvolutionAgent agent;
 
     int genomeRotIndex = 0;
 
     float timer = 0;
-    public float speed = 5.0f;
 
     Vector3 startPos;
     Quaternion startRot;
@@ -23,11 +27,7 @@ public class AICarController : Car
     CheckpointManager checkpointManager;
 
     int scoreThreshold;
-    public int rotationCount = 27;
-    public float[] rotations;
 
-    [Range(0, 1)]
-    public float timerMax = 0.2f;
 
     float lifetime = 0;
 
