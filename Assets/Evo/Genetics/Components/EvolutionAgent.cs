@@ -107,7 +107,7 @@ namespace Evo
             IsAlive = true;
             onResetEvent?.Invoke();
         }
-
+#if UNITY_EDITOR
         /// <summary>
         /// Saves DNA to a ScriptableObject
         /// </summary>
@@ -125,6 +125,7 @@ namespace Evo
             EditorUtility.FocusProjectWindow();
             Selection.activeObject = exportObject;
         }
+#endif
 
         /// <summary>
         /// Decreases score by an amount

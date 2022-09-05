@@ -7,6 +7,7 @@ using System;
 
 namespace Evo.Tools
 {
+#if UNITY_EDITOR
     public class FilePathWizard : ScriptableWizard
     {
         public static string agentsKey = "EvoFilePath.Agent";
@@ -129,4 +130,5 @@ namespace Evo.Tools
             return path;
         }
     }
+#endif 
 }

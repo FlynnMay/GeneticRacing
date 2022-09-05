@@ -7,6 +7,7 @@ using UnityEditor;
 
 namespace Evo.EditorStyle
 {
+#if UNITY_EDITOR
     [CustomEditor(typeof(EvolutionAgent))]
     public class EvolutionAgentEditor : Editor
     {
@@ -61,4 +62,5 @@ namespace Evo.EditorStyle
             }
         }
     }
+#endif 
 }

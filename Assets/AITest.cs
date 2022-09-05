@@ -28,6 +28,7 @@ public class AITest : MonoBehaviour
     }
 }
 
+#if UNITY_EDITOR
 [CustomEditor(typeof(AITest))]
 public class AITestEditor : Editor
 {
@@ -38,3 +39,4 @@ public class AITestEditor : Editor
             (target as AITest).CalculateFitness();
     }
 }
+#endif

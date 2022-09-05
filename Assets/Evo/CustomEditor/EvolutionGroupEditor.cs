@@ -6,6 +6,7 @@ using UnityEditor;
 
 namespace Evo.EditorStyle
 {
+#if UNITY_EDITOR
     [CustomEditor(typeof(EvolutionGroup))]
     public class EvolutionGroupEditor : Editor
     {
@@ -105,4 +106,5 @@ namespace Evo.EditorStyle
             GUILayout.EndHorizontal();
         }
     }
+#endif
 }

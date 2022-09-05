@@ -145,7 +145,7 @@ public class AICarController : Car
 
     private void OnTriggerEnter(Collider other)
     {
-        if (!agent.DNA.IsTraining)
+        if (agent.DNA == null || !agent.DNA.IsTraining)
             return;
 
         if (other.CompareTag("Destination"))
@@ -159,7 +159,7 @@ public class AICarController : Car
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (!agent.DNA.IsTraining)
+        if (agent.DNA == null || !agent.DNA.IsTraining)
             return;
 
         if (collision.collider.CompareTag("Wall"))

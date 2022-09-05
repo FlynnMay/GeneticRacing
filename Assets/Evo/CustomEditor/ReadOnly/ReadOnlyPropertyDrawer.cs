@@ -5,6 +5,7 @@ using UnityEditor;
 
 namespace Evo
 {
+#if UNITY_EDITOR
     [CustomPropertyDrawer(typeof(ReadOnlyAttribute))]
     public class ReadOnlyPropertyDrawer : PropertyDrawer
     {
@@ -15,4 +16,5 @@ namespace Evo
             GUI.enabled = true;
         }
     }
+#endif
 }

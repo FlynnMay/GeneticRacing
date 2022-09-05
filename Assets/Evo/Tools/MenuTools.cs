@@ -6,6 +6,7 @@ using System.IO;
 
 namespace Evo.Tools
 {
+#if UNITY_EDITOR
     public static class MenuTools
     {
         [MenuItem("Evo/Create/DNA Type")]
@@ -53,4 +54,6 @@ namespace Evo.Tools
             Selection.activeObject = AssetDatabase.LoadAssetAtPath(path, typeof(Object));
         }
     }
+#endif
+
 }

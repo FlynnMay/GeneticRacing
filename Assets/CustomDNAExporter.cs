@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Evo;
 
+#if UNITY_EDITOR
 public class CustomDNAExporter : MonoBehaviour
 {
     EvolutionGroup group;
@@ -12,7 +13,7 @@ public class CustomDNAExporter : MonoBehaviour
 
     void Start()
     {
-        group = GetComponent<EvolutionGroup>();    
+        group = GetComponent<EvolutionGroup>();
     }
 
     void Update()
@@ -20,7 +21,7 @@ public class CustomDNAExporter : MonoBehaviour
         if (group.agents == null || group.agents.Length <= 0)
             return;
 
-        if(group.GetBestFitness() >= threshold)
+        if (group.GetBestFitness() >= threshold)
         {
             EvolutionAgent agent = group.agents.OrderByDescending(a => a.DNA.Fitness).First();
             agent.name = $"{agent.DNA.Fitness}({group.GetGeneration()})";
@@ -28,3 +29,4 @@ public class CustomDNAExporter : MonoBehaviour
         }
     }
 }
+#endif
