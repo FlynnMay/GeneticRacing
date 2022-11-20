@@ -52,6 +52,7 @@ public class AICarController : Car
             sphereRigidbody.gameObject.SetActive(true);
             timer = 0.0f;
             Finished = false;
+            KeepInView = true;
         });
     }
 
@@ -60,9 +61,10 @@ public class AICarController : Car
         if (agent.DNA == null)
             return;
 
+        bool renderEnabled = group.GetGeneration() > 1 && agent.IsElite;
         if (agent.DNA.IsTraining)
             foreach (MeshRenderer meshRenderer in meshRenderers)
-                meshRenderer.enabled = group.GetGeneration() > 1 && agent.IsElite;
+                meshRenderer.enabled = renderEnabled;
 
         if (!agent.IsAlive || !CanMove)
             return;
@@ -156,6 +158,7 @@ public class AICarController : Car
         {
             agent.Penalise();
             agent.IsAlive = false;
+            KeepInView = false;
             sphereRigidbody.velocity = Vector3.zero;
             sphereRigidbody.angularVelocity = Vector3.zero;
             sphereRigidbody.gameObject.SetActive(false);
