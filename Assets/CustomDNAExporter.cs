@@ -10,6 +10,7 @@ public class CustomDNAExporter : MonoBehaviour
     EvolutionGroup group;
     [Range(0f, 1f)]
     public float threshold = 1f;
+    int lastGen = -1;
 
     void Start()
     {
@@ -21,12 +22,13 @@ public class CustomDNAExporter : MonoBehaviour
         if (group.agents == null || group.agents.Length <= 0)
             return;
 
-        if (group.GetBestFitness() >= threshold)
+        if (group.GetBestFitness() >= threshold && lastGen != group.GetGeneration())
         {
             EvolutionAgent agent = group.agents.OrderByDescending(a => a.DNA.Fitness).First();
             agent.name = $"{agent.DNA.Fitness}({group.GetGeneration()})";
             agent.ExportDNA();
         }
+        lastGen = group.GetGeneration();
     }
 }
 #endif

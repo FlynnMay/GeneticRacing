@@ -57,6 +57,9 @@ public class RaceManager : MonoBehaviour
 
     public void CarFinishedRace(Car finsishedCar)
     {
+        if (GameManager.Instance.IsTraining)
+            return;
+
         finishedPositions[finishedRacers] = finsishedCar;
         finishedRacers++;
 

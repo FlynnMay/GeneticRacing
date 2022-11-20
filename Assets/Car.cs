@@ -33,7 +33,7 @@ public class Car : MonoBehaviour
         transform.Rotate(0, turn * turnSpeed * Time.deltaTime * vertical, 0, Space.World);
     }
 
-    protected void FixedUpdate()
+    protected virtual void FixedUpdate()
     {
         sphereRigidbody.AddForce(transform.forward * move, ForceMode.Acceleration);
     }

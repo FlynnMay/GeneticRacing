@@ -20,6 +20,11 @@ public class AICarController : Car
     MeshRenderer[] meshRenderers;
     CheckpointManager checkpointManager;
 
+    [SerializeField] Transform leftSensor;
+    [SerializeField] Transform middleSensor;
+    [SerializeField] Transform rightSensor;
+    [SerializeField] LayerMask sensorMask;
+
     int scoreThreshold;
 
     Vector3 targetPos;
@@ -46,6 +51,7 @@ public class AICarController : Car
             transform.rotation = startRot;
             sphereRigidbody.gameObject.SetActive(true);
             timer = 0.0f;
+            Finished = false;
         });
     }
 
@@ -61,57 +67,47 @@ public class AICarController : Car
         if (!agent.IsAlive || !CanMove)
             return;
 
-        int[] genes = agent.DNA.Genes.Cast<int>().ToArray();
-        int gene = GetRotationFromGenes(genes);
-
-        switch (gene)
-        {
-            case 0:
-                turn = 0;
-                vertical = 0;
-                break;
-            case 1:
-                turn = 0;
-                vertical = 1;
-                break;
-            case 2:
-                turn = 0;
-                vertical = -1;
-                break;
-            case 3:
-                turn = -1;
-                vertical = 1;
-                break;
-            case 4:
-                turn = 1;
-                vertical = 1;
-                break;
-            case 5:
-                turn = -1;
-                vertical = -1;
-                break;
-            case 6:
-                turn = 1;
-                vertical = -1;
-                break;
-            default:
-                break;
-        }
+        if (Finished)
+            agent.IsAlive = false;
 
         base.Update();
+    }
 
-        if (genomeIndex >= genes.Length)
+    protected override void FixedUpdate()
+    {
+        if (agent.DNA != null)
         {
-            agent.IsAlive = false;
-            return;
+            float[] genes = agent.DNA.Genes.Cast<float>().ToArray();
+
+            turn = 0;
+            vertical = 1;
+            float tempTurn = 0;
+            RaycastHit hit;
+
+            //if (Physics.Raycast(middleSensor.position, middleSensor.forward, out RaycastHit hit, float.PositiveInfinity, sensorMask))
+            //{
+            //     vertical = hit.distance > genes[0] ? 1 : 0;
+            //}
+
+            if (Raycast(leftSensor, out hit))
+            {
+                tempTurn += hit.distance < genes[1] ? 1 : 0;
+            }
+            
+            if (Raycast(rightSensor, out hit))
+            {
+                tempTurn += hit.distance < genes[2] ? -1 : 0;
+            }
+
+            turn = tempTurn;
         }
 
-        timer += Time.deltaTime;
-        if(timer > timerMax)
-        {
-            timer = 0.0f;
-            genomeIndex++;
-        }
+        base.FixedUpdate();
+    }
+
+    private bool Raycast(Transform sensor, out RaycastHit hit)
+    {
+        return Physics.Raycast(sensor.position, sensor.forward, out hit, float.PositiveInfinity, sensorMask);
     }
 
     private int GetRotationFromGenes(int[] genes)
