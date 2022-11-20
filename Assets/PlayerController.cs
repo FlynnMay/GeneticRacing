@@ -4,34 +4,16 @@ using UnityEngine;
 
 public class PlayerController : Car
 {
-    public Rigidbody sphereRigidbody;
-    public float speed = 200.0f;
-    public float turnSpeed = 150.0f;
-    float move;
-    float turn;
 
-    private void Awake()
+    protected override void Update()
     {
-        sphereRigidbody.transform.SetParent(null);
-    }
-
-    private void Update()
-    {
-        if(!CanMove)
+        if (!CanMove)
             return;
 
-        float moveInput = Input.GetAxisRaw("Vertical");
-        move = moveInput * ((moveInput > 0) ? speed : speed / 2); 
-
+        vertical = Input.GetAxisRaw("Vertical");
         turn = Input.GetAxisRaw("Horizontal");
 
-        transform.position = sphereRigidbody.position;
-        transform.Rotate(0, turn * turnSpeed * Time.deltaTime * moveInput, 0, Space.World);
-    }
-
-    private void FixedUpdate()
-    {
-        sphereRigidbody.AddForce(transform.forward * move, ForceMode.Acceleration);
+        base.Update();
     }
 
     public override void OnTraversedWrongCheckpoint(int attemptedCheckpoint, int expectedCheckpoint)

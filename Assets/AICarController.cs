@@ -5,16 +5,14 @@ using Evo;
 
 public class AICarController : Car
 {
-    public float speed = 5.0f;
-    public int rotationCount = 27;
-    public float[] rotations;
-
     [Range(0, 1)]
     public float timerMax = 0.2f;
-    EvolutionGroup group;
-    EvolutionAgent agent;
+    float timer = 0.0f;
 
-    int genomeRotIndex = 0;
+    EvolutionGroup group;
+    public EvolutionAgent agent;
+
+    int genomeIndex = 0;
 
     Vector3 startPos;
     Quaternion startRot;
@@ -26,7 +24,7 @@ public class AICarController : Car
 
     Vector3 targetPos;
 
-    void Start()
+    protected void Start()
     {
         group = FindObjectOfType<EvolutionGroup>();
 
@@ -40,38 +38,18 @@ public class AICarController : Car
         startPos = transform.position;
         startRot = transform.rotation;
 
-        rotations = new float[rotationCount];
-
-        float rotInteval = 360 / rotationCount;
-        float rotSum = rotInteval;
-
-        for (int i = 0; i < rotationCount; i++)
-        {
-            rotations[i] = rotSum;
-            rotSum += rotInteval;
-        }
-
         agent.onResetEvent.AddListener(() =>
         {
-            //StopAllCoroutines();
             checkpointManager?.ResetCheckpointIndex(this);
-            genomeRotIndex = 0;
+            genomeIndex = 0;
             transform.position = startPos;
             transform.rotation = startRot;
-            StartCoroutine(StartMovementOnDNAFound());
+            sphereRigidbody.gameObject.SetActive(true);
+            timer = 0.0f;
         });
-        StartCoroutine(StartMovementOnDNAFound());
     }
 
-    private IEnumerator StartMovementOnDNAFound()
-    {
-        while (agent.DNA == null)
-            yield return null;
-
-        OnTargetReached();
-    }
-
-    void Update()
+    protected override void Update()
     {
         if (agent.DNA == null)
             return;
@@ -83,46 +61,62 @@ public class AICarController : Car
         if (!agent.IsAlive || !CanMove)
             return;
 
-        float[] genes = agent.DNA.Genes.Cast<float>().ToArray();
+        int[] genes = agent.DNA.Genes.Cast<int>().ToArray();
+        int gene = GetRotationFromGenes(genes);
 
-        if (genomeRotIndex >= genes.Length)
+        switch (gene)
+        {
+            case 0:
+                turn = 0;
+                vertical = 0;
+                break;
+            case 1:
+                turn = 0;
+                vertical = 1;
+                break;
+            case 2:
+                turn = 0;
+                vertical = -1;
+                break;
+            case 3:
+                turn = -1;
+                vertical = 1;
+                break;
+            case 4:
+                turn = 1;
+                vertical = 1;
+                break;
+            case 5:
+                turn = -1;
+                vertical = -1;
+                break;
+            case 6:
+                turn = 1;
+                vertical = -1;
+                break;
+            default:
+                break;
+        }
+
+        base.Update();
+
+        if (genomeIndex >= genes.Length)
         {
             agent.IsAlive = false;
             return;
         }
+
+        timer += Time.deltaTime;
+        if(timer > timerMax)
+        {
+            timer = 0.0f;
+            genomeIndex++;
+        }
     }
 
-    private void FixedUpdate()
+    private int GetRotationFromGenes(int[] genes)
     {
-        if (!agent.IsAlive || !CanMove)
-            return;
-
-        if (Vector3.Distance(targetPos, transform.position) <= 0.2f)
-            OnTargetReached();
-
-        transform.position = Vector3.MoveTowards(transform.position, targetPos, speed * Time.fixedDeltaTime);
-    }
-
-    private void OnTargetReached()
-    {
-        genomeRotIndex++;
-
-        float[] genes = agent.DNA.Genes.Cast<float>().ToArray();
-
-        float y = GetRotationFromGenes(genes);
-
-        Quaternion rot = Quaternion.Euler(0, y, 0);
-        Vector3 dir = Vector3.RotateTowards(transform.forward, rot * Vector3.forward, speed * Time.deltaTime, 0.0f);
-        transform.rotation = Quaternion.LookRotation(dir);
-
-        targetPos = transform.position + dir;
-    }
-
-    private float GetRotationFromGenes(float[] genes)
-    {
-        int rotIndex = (int)((genes[genomeRotIndex] * (rotationCount - 1)) + 0.5f);
-        float y = rotations[rotIndex];
-        return y;
+        return genes[genomeIndex];
     }
 
     public override void OnTraversedWrongCheckpoint(int attemptedCheckpoint, int expectedCheckpoint)
@@ -143,7 +137,7 @@ public class AICarController : Car
     }
 
 
-    private void OnTriggerEnter(Collider other)
+    public void OnTriggerEnter(Collider other)
     {
         if (agent.DNA == null || !agent.DNA.IsTraining)
             return;
@@ -157,7 +151,7 @@ public class AICarController : Car
         }
     }
 
-    private void OnCollisionEnter(Collision collision)
+    public void OnCollisionEnter(Collision collision)
     {
         if (agent.DNA == null || !agent.DNA.IsTraining)
             return;
@@ -166,11 +160,14 @@ public class AICarController : Car
         {
             agent.Penalise();
             agent.IsAlive = false;
+            sphereRigidbody.velocity = Vector3.zero;
+            sphereRigidbody.angularVelocity = Vector3.zero;
+            sphereRigidbody.gameObject.SetActive(false);
             StopAllCoroutines();
         }
     }
 
-    private void OnDrawGizmosSelected()
+    public void OnDrawGizmosSelected()
     {
         if (agent == null || agent.DNA == null || !agent.IsAlive)
             return;
