@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: MinMaxFloat
   m_EditorClassIdentifier: 
   min: 0
-  max: 40
+  max: 150
