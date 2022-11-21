@@ -61,10 +61,12 @@ public class AICarController : Car
         if (agent.DNA == null)
             return;
 
-        bool renderEnabled = group.GetGeneration() > 1 && agent.IsElite;
         if (agent.DNA.IsTraining)
+        {
+            bool renderEnabled = group.GetGeneration() > 1 && agent.IsElite;
             foreach (MeshRenderer meshRenderer in meshRenderers)
                 meshRenderer.enabled = renderEnabled;
+        }
 
         if (!agent.IsAlive || !CanMove)
             return;
@@ -95,7 +97,7 @@ public class AICarController : Car
             {
                 tempTurn += hit.distance < genes[1] ? 1 : 0;
             }
-            
+
             if (Raycast(rightSensor, out hit))
             {
                 tempTurn += hit.distance < genes[2] ? -1 : 0;

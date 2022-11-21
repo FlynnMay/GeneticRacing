@@ -4,11 +4,12 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+    [SerializeField] bool isTraining = false;
+    [SerializeField] Evo.EvolutionGroup group;
     RaceManager raceManager;
     public static GameManager Instance { get; private set; }
     public static RaceManager RaceManager { get => Instance.raceManager; }
-    public bool IsTraining { get => group.isActiveAndEnabled; }
-    Evo.EvolutionGroup group;
+    public bool IsTraining { get => isTraining; set => isTraining = value; }
 
     private void Awake()
     {
@@ -21,6 +22,8 @@ public class GameManager : MonoBehaviour
         }
 
         raceManager = GetComponentInChildren<RaceManager>();
-        group = FindObjectOfType<Evo.EvolutionGroup>();
+
+        if (IsTraining)
+            group.StartEvolving();
     }
 }
