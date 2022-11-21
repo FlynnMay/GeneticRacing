@@ -22,7 +22,10 @@ public class GameManager : MonoBehaviour
         }
 
         raceManager = GetComponentInChildren<RaceManager>();
+    }
 
+    private void Start()
+    {
         if (IsTraining)
             group.StartEvolving();
     }

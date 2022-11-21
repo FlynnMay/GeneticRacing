@@ -7,12 +7,12 @@ public class AICarController : Car
 {
     [Range(0, 1)]
     public float timerMax = 0.2f;
-    float timer = 0.0f;
+    public EvolutionAgent agent;
+    [SerializeField] Transform leftSensor;
+    [SerializeField] Transform rightSensor;
+    [SerializeField] LayerMask sensorMask;
 
     EvolutionGroup group;
-    public EvolutionAgent agent;
-
-    int genomeIndex = 0;
 
     Vector3 startPos;
     Quaternion startRot;
@@ -20,10 +20,6 @@ public class AICarController : Car
     MeshRenderer[] meshRenderers;
     CheckpointManager checkpointManager;
 
-    [SerializeField] Transform leftSensor;
-    [SerializeField] Transform middleSensor;
-    [SerializeField] Transform rightSensor;
-    [SerializeField] LayerMask sensorMask;
 
     int scoreThreshold;
 
@@ -34,7 +30,12 @@ public class AICarController : Car
         group = FindObjectOfType<EvolutionGroup>();
 
         if (group != null)
+        {
             scoreThreshold = group.rewardThreshold;
+
+            for (int i = 0; i < extraVfx.Length; i++)
+                extraVfx[i].SetActive(!GameManager.Instance.IsTraining);
+        }
 
         checkpointManager = FindObjectOfType<CheckpointManager>();
         meshRenderers = GetComponentsInChildren<MeshRenderer>();
@@ -46,11 +47,9 @@ public class AICarController : Car
         agent.onResetEvent.AddListener(() =>
         {
             checkpointManager?.ResetCheckpointIndex(this);
-            genomeIndex = 0;
             transform.position = startPos;
             transform.rotation = startRot;
             sphereRigidbody.gameObject.SetActive(true);
-            timer = 0.0f;
             Finished = false;
             KeepInView = true;
         });
@@ -86,13 +85,8 @@ public class AICarController : Car
             turn = 0;
             vertical = 1;
             float tempTurn = 0;
+
             RaycastHit hit;
-
-            //if (Physics.Raycast(middleSensor.position, middleSensor.forward, out RaycastHit hit, float.PositiveInfinity, sensorMask))
-            //{
-            //     vertical = hit.distance > genes[0] ? 1 : 0;
-            //}
-
             if (Raycast(leftSensor, out hit))
             {
                 tempTurn += hit.distance < genes[1] ? 1 : 0;
@@ -112,11 +106,6 @@ public class AICarController : Car
     private bool Raycast(Transform sensor, out RaycastHit hit)
     {
         return Physics.Raycast(sensor.position, sensor.forward, out hit, float.PositiveInfinity, sensorMask);
-    }
-
-    private int GetRotationFromGenes(int[] genes)
-    {
-        return genes[genomeIndex];
     }
 
     public override void OnTraversedWrongCheckpoint(int attemptedCheckpoint, int expectedCheckpoint)

@@ -14,6 +14,7 @@ public class Car : MonoBehaviour
     protected float turn;
     protected bool canMove = true;
     protected bool keepInView = true;
+    [SerializeField] protected GameObject[] extraVfx;
 
     public bool CanMove { get => canMove; set => canMove = value; }
     public bool Finished { get; protected set; } = false;
