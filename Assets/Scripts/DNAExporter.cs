@@ -14,6 +14,6 @@ public static class DNAExporter
 
         using (StreamWriter writer = File.CreateText($"{Application.persistentDataPath}/Agents.json"))
             writer.Write(json);
-    } 
+    }
 }
 

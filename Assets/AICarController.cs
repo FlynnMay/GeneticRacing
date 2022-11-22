@@ -188,4 +188,21 @@ public class AICarController : Car
     {
         return JsonHelper.ArrayToJson(agent.DNA.Genes.Cast<float>().ToArray(), true);
     }
+    
+    public AICarInstance ToInstance()
+    {
+        return new AICarInstance(name, agent.DNA.Genes.Cast<float>().ToArray());
+    }
+}
+
+public class AICarInstance
+{
+    string name = "Ai";
+    float[] sensors;
+
+    public AICarInstance(string name, float[] sensors)
+    {
+        this.name = name;
+        this.sensors = sensors;
+    }
 }
