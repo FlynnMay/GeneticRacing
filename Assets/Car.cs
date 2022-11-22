@@ -8,6 +8,7 @@ public class Car : MonoBehaviour
     public string carName = "Car";
     public Rigidbody sphereRigidbody;
     public float speed = 200.0f;
+    protected float startSpeed;
     public float turnSpeed = 150.0f;
     float move;
     protected float vertical;
@@ -27,6 +28,7 @@ public class Car : MonoBehaviour
         transform.SetParent(parent.transform);
         sphereRigidbody.transform.SetParent(parent.transform);
         sphereRigidbody.GetComponent<MeshRenderer>().enabled = false;
+        startSpeed = speed;
     }
 
     protected virtual void Update()

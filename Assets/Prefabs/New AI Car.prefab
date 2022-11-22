@@ -273,6 +273,7 @@ MonoBehaviour:
   timerMax: 0.2
   agent: {fileID: 0}
   leftSensor: {fileID: 239556763449634693}
+  middleSensor: {fileID: 7474307921743693342}
   rightSensor: {fileID: 1056554282951497491}
   sensorMask:
     serializedVersion: 2

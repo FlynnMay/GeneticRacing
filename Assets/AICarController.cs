@@ -7,8 +7,10 @@ public class AICarController : Car
 {
     [Range(0, 1)]
     public float timerMax = 0.2f;
+    public bool forceRender;
     public EvolutionAgent agent;
     [SerializeField] Transform leftSensor;
+    [SerializeField] Transform middleSensor;
     [SerializeField] Transform rightSensor;
     [SerializeField] LayerMask sensorMask;
     [SerializeField] AICarEngine engine;
@@ -68,7 +70,7 @@ public class AICarController : Car
 
         if (agent.DNA.IsTraining)
         {
-            bool renderEnabled = group.GetGeneration() > 1 && agent.IsElite;
+            bool renderEnabled = group.GetGeneration() > 1 && agent.IsElite || forceRender;
             foreach (MeshRenderer meshRenderer in meshRenderers)
                 meshRenderer.enabled = renderEnabled;
         }
@@ -93,6 +95,7 @@ public class AICarController : Car
             float tempTurn = 0;
 
             RaycastHit hit;
+
             if (Raycast(leftSensor, out hit))
             {
                 tempTurn += hit.distance < genes[1] ? 1 : 0;
@@ -173,5 +176,16 @@ public class AICarController : Car
             return;
 
         Gizmos.DrawSphere(targetPos, 0.5f);
+        RaycastHit hit;
+        if (Raycast(middleSensor, out hit))
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawLine(middleSensor.position, hit.point);
+        }
+    }
+
+    public string DNAToJson()
+    {
+        return JsonHelper.ArrayToJson(agent.DNA.Genes.Cast<float>().ToArray(), true);
     }
 }

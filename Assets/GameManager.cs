@@ -6,6 +6,7 @@ public class GameManager : MonoBehaviour
 {
     [SerializeField] bool isTraining = false;
     [SerializeField] Evo.EvolutionGroup group;
+    [SerializeField] GameObject trainingPanel;
     RaceManager raceManager;
     public static GameManager Instance { get; private set; }
     public static RaceManager RaceManager { get => Instance.raceManager; }
@@ -26,6 +27,7 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        trainingPanel.SetActive(IsTraining);
         if (IsTraining)
             StartTraining();
     }
@@ -51,5 +53,10 @@ public class GameManager : MonoBehaviour
     private void DeleteKey()
     {
         PlayerPrefs.DeleteKey(GRPrefKeys.GRTraining);
+    }
+
+    public void OverrideSpectate()
+    {
+
     }
 }
