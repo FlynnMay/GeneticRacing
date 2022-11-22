@@ -1,3 +1,4 @@
+using Evo;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,21 +30,40 @@ public class RaceManager : MonoBehaviour
 
     private void Start()
     {
-        if (!GameManager.Instance.IsTraining)
+        countdownReset = startCountdown;
+
+        StartRace();
+    }
+
+    public void SetupCars()
+    {
+        if (GameManager.Instance.IsTraining)
+        {
+            cars = FindObjectsOfType<Car>().ToList();
+        }
+        else
         {
             GameObject player = Instantiate(playerPrefab);
             player.transform.position = spawnPositions[0].position;
+            cars.Add(player.GetComponent<Car>());
+
+            List<AICarInstance> options = DNAExporter.Deserialise();
+            AICarController aiCarPrefab = aiPrefab.GetComponent<AICarController>();
+            for (int i = 1; i < spawnPositions.Length; i++)
+            {
+                AICarController aiCar = Instantiate(aiCarPrefab);
+                Transform t = spawnPositions[i];
+                aiCar.SetPositionAndRotation(t.position, t.rotation);
+                aiCar.FindAgent();
+                aiCar.FromInstance(options[Random.Range(0, options.Count)]);
+                cars.Add(aiCar);
+            }
         }
 
-        cars = FindObjectsOfType<Car>().ToList();
         finishedPositions = new Car[cars.Count];
 
         foreach (Car car in cars)
             car.CanMove = carsCanMoveBeforeRaceStart;
-
-        countdownReset = startCountdown;
-
-        StartRace();
     }
 
     public void StartRace()

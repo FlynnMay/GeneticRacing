@@ -8,12 +8,29 @@ using UnityEngine;
 
 public static class DNAExporter
 {
-    public static void Export(this AICarController car)
+    public static void Serialise(this AICarController car)
     {
-        string json = car.DNAToJson();
+        AICarInstance carInstance = car.ToInstance();
 
-        using (StreamWriter writer = File.CreateText($"{Application.persistentDataPath}/Agents.json"))
-            writer.Write(json);
+        List<AICarInstance> carInstances = Deserialise();
+        carInstances.Add(carInstance);
+
+        using (StreamWriter writer = File.CreateText(GetPath()))
+            writer.Write(JsonHelper.ArrayToJson(carInstances.ToArray(), true));
     }
+
+    public static List<AICarInstance> Deserialise()
+    {
+        if (!File.Exists(GetPath()))
+            File.Create(GetPath());
+
+        AICarInstance[] carInstances;
+        using (StreamReader reader = new StreamReader(GetPath()))
+            carInstances = (JsonHelper.ArrayFromJson<AICarInstance>(reader.ReadToEnd()));
+
+        return carInstances != null ? carInstances.ToList() : new List<AICarInstance>();
+    }
+
+    public static string GetPath() => $"{Application.persistentDataPath}/Agents.json";
 }
 

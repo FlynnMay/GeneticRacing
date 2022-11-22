@@ -2,6 +2,7 @@ using System.Collections;
 using System.Linq;
 using UnityEngine;
 using Evo;
+using System;
 
 public class AICarController : Car
 {
@@ -9,6 +10,8 @@ public class AICarController : Car
     public float timerMax = 0.2f;
     public bool forceRender;
     public EvolutionAgent agent;
+    public event Action OnReady;
+
     [SerializeField] Transform leftSensor;
     [SerializeField] Transform middleSensor;
     [SerializeField] Transform rightSensor;
@@ -35,7 +38,8 @@ public class AICarController : Car
 
     protected void Start()
     {
-        group = FindObjectOfType<EvolutionGroup>();
+        FindAgent();
+        group = agent.group;
 
         if (group != null)
         {
@@ -47,7 +51,6 @@ public class AICarController : Car
 
         checkpointManager = FindObjectOfType<CheckpointManager>();
         meshRenderers = GetComponentsInChildren<MeshRenderer>();
-        agent = GetComponent<EvolutionAgent>();
 
         startPos = transform.position;
         startRot = transform.rotation;
@@ -61,6 +64,22 @@ public class AICarController : Car
             Finished = false;
             KeepInView = true;
         });
+
+        StartCoroutine(WaitForAgentDNA());
+    }
+    
+    public void SetPositionAndRotation(Vector3 pos, Quaternion rot)
+    {
+        engine.transform.position = pos;
+        engine.transform.rotation = rot;
+        transform.position = pos;
+        transform.rotation = rot;
+    }
+
+    public void FindAgent()
+    {
+        if (agent == null)
+            agent = GetComponent<EvolutionAgent>();
     }
 
     protected override void Update()
@@ -112,9 +131,17 @@ public class AICarController : Car
         base.FixedUpdate();
     }
 
+    IEnumerator WaitForAgentDNA()
+    {
+        while (agent == null)
+            yield return null;
+
+        OnReady?.Invoke();
+    }
+
     public void SetTraining(bool training)
     {
-        //agent
+        agent.SetTraining(training);
     }
 
     private bool Raycast(Transform sensor, out RaycastHit hit)
@@ -184,25 +211,29 @@ public class AICarController : Car
         }
     }
 
-    public string DNAToJson()
-    {
-        return JsonHelper.ArrayToJson(agent.DNA.Genes.Cast<float>().ToArray(), true);
-    }
-    
     public AICarInstance ToInstance()
     {
         return new AICarInstance(name, agent.DNA.Genes.Cast<float>().ToArray());
     }
+
+    public void FromInstance(AICarInstance instance)
+    {
+        name = instance.name;
+        DNA<float> dna = ScriptableObject.CreateInstance<EvoDNAFloat>();
+        dna.genes = instance.genes;
+        agent.SetAndApplyDNA(dna);
+    }
 }
 
+[Serializable]
 public class AICarInstance
 {
-    string name = "Ai";
-    float[] sensors;
+    public string name = "Ai";
+    public float[] genes;
 
-    public AICarInstance(string name, float[] sensors)
+    public AICarInstance(string name, float[] ganes)
     {
         this.name = name;
-        this.sensors = sensors;
+        this.genes = ganes;
     }
 }

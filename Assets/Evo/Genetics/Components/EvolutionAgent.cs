@@ -21,6 +21,12 @@ namespace Evo
         /// </summary>
         [HideInInspector]
         public UnityEvent onResetEvent;
+        
+        /// <summary>
+        /// This event is called on the agent's Awake
+        /// </summary>
+        [HideInInspector]
+        public UnityEvent onAwakeEvent;
 
         /// <summary>
         /// Determines the output and input types of an agent's DNA, This is used when calling the ExportDNA function 
@@ -65,6 +71,12 @@ namespace Evo
         /// </summary>
         [SerializeField]
         bool training = true;
+        
+        /// <summary>
+        /// If checked the agent will apply the default dna on awake.
+        /// </summary>
+        [SerializeField]
+        bool applyDefaultDNA = true;
 
         /// <summary>
         /// Used to check if the player is training.
@@ -74,7 +86,20 @@ namespace Evo
 
         private void Awake()
         {
-            if (training) 
+            onAwakeEvent?.Invoke();
+
+            if (!applyDefaultDNA)
+                return;
+
+            InitialiseDefaultDNA();
+        }
+
+        /// <summary>
+        /// Sets the DNA to default DNA
+        /// </summary>
+        private void InitialiseDefaultDNA()
+        {
+            if (training)
                 return;
 
             if (defaultDNA == null)
@@ -193,6 +218,7 @@ namespace Evo
         /// </summary>
         public void ApplyDefaultDNA()
         {
+            DNA = new Genome(this, 0);
             Type type = defaultDNA.GetType();
             FieldInfo info = type.GetField("genes");
             object genes = info.GetValue(defaultDNA);
@@ -221,9 +247,13 @@ namespace Evo
         /// Sets whether or not the agent is training
         /// </summary>
         /// <param name="_training">Should the agent be training</param>
-        public void SetTraining(bool _training)
+        /// <param name="_alterGroup">Should the agent be removed / added to the training group</param>
+        public void SetTraining(bool _training, bool _alterGroup = true)
         {
             training = _training;
+
+            if (!_alterGroup)
+                return;
 
             if (training)
                 AddSelfToGroup();

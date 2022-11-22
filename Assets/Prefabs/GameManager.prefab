@@ -112,3 +112,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isTraining: 0
   group: {fileID: 0}
+  trainingPanel: {fileID: 0}
+  followCars: {fileID: 0}

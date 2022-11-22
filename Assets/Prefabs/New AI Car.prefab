@@ -271,6 +271,7 @@ MonoBehaviour:
   - {fileID: 3124327607678252908}
   - {fileID: 1628180755703184810}
   timerMax: 0.2
+  forceRender: 0
   agent: {fileID: 0}
   leftSensor: {fileID: 239556763449634693}
   middleSensor: {fileID: 7474307921743693342}
@@ -294,10 +295,14 @@ MonoBehaviour:
   onResetEvent:
     m_PersistentCalls:
       m_Calls: []
+  onAwakeEvent:
+    m_PersistentCalls:
+      m_Calls: []
   DNAType: {fileID: 0}
   defaultDNA: {fileID: 0}
   group: {fileID: 0}
-  training: 1
+  training: 0
+  applyDefaultDNA: 0
 --- !u!54 &7675339550186084254
 Rigidbody:
   m_ObjectHideFlags: 0

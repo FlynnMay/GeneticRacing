@@ -157,14 +157,23 @@ namespace Evo
         {
             LoadAgents();
 
-            foreach (EvolutionAgent agent in agents)
-            {
-                agent.Init((int)genomeSize, random, agentDNAType, this);
-            }
+            InitAgents();
 
             List<Genome> genomes = agents.Select(a => a.DNA).ToList();
 
             geneticAlgorithm = new EvoGeneticAlgorithm(genomes, (int)genomeSize, random, this, mutationRate, (int)eliteCount);
+        }
+
+
+        /// <summary>
+        /// Intitalises all loaded agents
+        /// </summary>
+        public void InitAgents()
+        {
+            foreach (EvolutionAgent agent in agents)
+            {
+                agent.Init((int)genomeSize, random, agentDNAType, this);
+            }
         }
 
 

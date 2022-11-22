@@ -7,6 +7,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] bool isTraining = false;
     [SerializeField] Evo.EvolutionGroup group;
     [SerializeField] GameObject trainingPanel;
+    [SerializeField] FollowAllCars followCars;
     RaceManager raceManager;
     public static GameManager Instance { get; private set; }
     public static RaceManager RaceManager { get => Instance.raceManager; }
@@ -30,16 +31,21 @@ public class GameManager : MonoBehaviour
         trainingPanel.SetActive(IsTraining);
         if (IsTraining)
             StartTraining();
+
+        RaceManager.SetupCars();
+        followCars.SetupCars();
     }
 
     private void StartTraining()
     {
         group.InstantiateNewAgents(300);
-        
+        group.LoadAgents();
+        //group.InitAgents();
+
         for (int i = 0; i < group.agents.Length; i++)
         {
             Evo.EvolutionAgent agent = group.agents[i];
-            agent.SetTraining(true);
+            agent.SetTraining(true, false);
         }
 
         group.StartEvolving();

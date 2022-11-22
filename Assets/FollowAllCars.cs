@@ -9,7 +9,7 @@ public class FollowAllCars : MonoBehaviour
     Cinemachine.CinemachineTargetGroup cinemachineTargetGroup;
     List<Car> overrideCars = new List<Car>();
 
-    private void Start()
+    public void SetupCars()
     {
         Car[] cars = GameManager.RaceManager.GetCars().ToArray();
         carsDict = new Dictionary<Transform, Car>();
@@ -29,9 +29,6 @@ public class FollowAllCars : MonoBehaviour
             Car car = carsDict[target.target];
             target.weight = car.KeepInView ? 1 : 0;
             target.radius = radius;
-
-            //if (!car.gameObject.activeInHierarchy)
-            //    target.weight = 0;
 
             if (overrideCars.Contains(car))
                 target.weight = 1;

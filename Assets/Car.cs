@@ -17,6 +17,7 @@ public class Car : MonoBehaviour
     protected bool keepInView = true;
     [SerializeField] protected GameObject[] extraVfx;
 
+
     public bool CanMove { get => canMove; set => canMove = value; }
     public bool Finished { get; protected set; } = false;
     public bool KeepInView { get => keepInView; protected set => keepInView = value; }
