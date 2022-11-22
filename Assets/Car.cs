@@ -20,12 +20,13 @@ public class Car : MonoBehaviour
     public bool Finished { get; protected set; } = false;
     public bool KeepInView { get => keepInView; protected set => keepInView = value; }
 
-    protected void Awake()
+    protected virtual void Awake()
     {
         GameObject parent = new GameObject($"{carName}: Car & Engine");
         parent.transform.SetParent(transform.parent);
         transform.SetParent(parent.transform);
         sphereRigidbody.transform.SetParent(parent.transform);
+        sphereRigidbody.GetComponent<MeshRenderer>().enabled = false;
     }
 
     protected virtual void Update()

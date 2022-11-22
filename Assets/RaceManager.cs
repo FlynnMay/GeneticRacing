@@ -8,6 +8,9 @@ public class RaceManager : MonoBehaviour
 {
     [SerializeField] bool carsCanMoveBeforeRaceStart = false;
     [SerializeField] float startCountdown = 3.0f;
+    [SerializeField] GameObject playerPrefab;
+    [SerializeField] GameObject aiPrefab;
+    [SerializeField] Transform[] spawnPositions;
     public UnityEvent<float> OnCountdownValueChanged;
     public UnityEvent<Car> OnRaceFinished;
     public float StartCountdown
@@ -24,8 +27,14 @@ public class RaceManager : MonoBehaviour
     Car[] finishedPositions;
     int finishedRacers = 0;
 
-    private void Awake()
+    private void Start()
     {
+        if (!GameManager.Instance.IsTraining)
+        {
+            GameObject player = Instantiate(playerPrefab);
+            player.transform.position = spawnPositions[0].position;
+        }
+
         cars = FindObjectsOfType<Car>().ToList();
         finishedPositions = new Car[cars.Count];
 
@@ -65,5 +74,20 @@ public class RaceManager : MonoBehaviour
 
         if (finishedRacers >= cars.Count)
             OnRaceFinished?.Invoke(finishedPositions.First());
+    }
+
+    public List<Car> GetCars()
+    {
+        return cars;
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.cyan;
+        for (int i = 0; i < spawnPositions.Length; i++)
+        {
+            Transform t = spawnPositions[i];
+            Gizmos.DrawSphere(t.position, 0.5f);
+        }
     }
 }

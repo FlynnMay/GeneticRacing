@@ -273,11 +273,11 @@ MonoBehaviour:
   timerMax: 0.2
   agent: {fileID: 0}
   leftSensor: {fileID: 239556763449634693}
-  middleSensor: {fileID: 7474307921743693342}
   rightSensor: {fileID: 1056554282951497491}
   sensorMask:
     serializedVersion: 2
     m_Bits: 64
+  engine: {fileID: 2889598712720438648}
 --- !u!114 &7876896538199923919
 MonoBehaviour:
   m_ObjectHideFlags: 0

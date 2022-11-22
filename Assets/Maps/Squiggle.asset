@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2795b3470eff0c44cb4977d3a1c33832, type: 3}
   m_Name: Squiggle
   m_EditorClassIdentifier: 
-  mapName: SquiggleTrack
+  mapName: Squiggle
   description: 
   previewSprite: {fileID: 21300000, guid: d4600c042c64aaa48aeba04607e55bf6, type: 3}
-  sceneName: 
+  sceneName: SquiggleTrack

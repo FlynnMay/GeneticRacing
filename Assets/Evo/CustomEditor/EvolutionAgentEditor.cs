@@ -58,6 +58,11 @@ namespace Evo.EditorStyle
 
                 EditorGUILayout.HelpBox(contents, MessageType.None);
                 EditorGUILayout.ObjectField("DNA Type", agent.DNAType, typeof(DNA), false);
+
+                GUI.enabled = Application.isPlaying;
+                bool training = agent.IsTraining;
+                if (GUILayout.Button(new GUIContent(training ? "Remove From Group" : "Add to Group")))
+                    agent.SetTraining(!training);
                 GUI.enabled = true;
             }
         }

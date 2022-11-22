@@ -11,4 +11,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/RoundTrack.unity
     guid: c772429e1077c0649a2b44b3e5faa4c1
+  - enabled: 1
+    path: Assets/Scenes/SquiggleTrack.unity
+    guid: e411b2c59cf379942b3a9038db63f349
   m_configObjects: {}

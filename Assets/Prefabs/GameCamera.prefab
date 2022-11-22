@@ -232,7 +232,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_PositionMode: 0
   m_RotationMode: 0
-  m_UpdateMethod: 2
+  m_UpdateMethod: 1
   m_Targets: []
 --- !u!1 &7282733418096197008
 GameObject:

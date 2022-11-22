@@ -9,7 +9,7 @@ public class CheckpointManager : MonoBehaviour
     Dictionary<Car, int> carCheckpointIndicies = new Dictionary<Car, int>();
     [SerializeField] List<Checkpoint> checkpoints = new List<Checkpoint>();
 
-    private void Awake()
+    private void Start()
     {
         GameObject checkpointsHolder = GameObject.Find("Checkpoints");
         checkpoints = checkpointsHolder.GetComponentsInChildren<Checkpoint>().ToList();

@@ -7,9 +7,9 @@ public class FollowAllCars : MonoBehaviour
     [SerializeField] float radius = 2.0f;
     Dictionary<Transform, Car> carsDict;
     Cinemachine.CinemachineTargetGroup cinemachineTargetGroup;
-    private void Awake()
+    private void Start()
     {
-        Car[] cars = FindObjectsOfType<Car>();
+        Car[] cars = GameManager.RaceManager.GetCars().ToArray();
         carsDict = new Dictionary<Transform, Car>();
         cinemachineTargetGroup = GetComponent<Cinemachine.CinemachineTargetGroup>();
         for (int i = 0; i < cars.Length; i++)

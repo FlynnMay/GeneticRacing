@@ -212,6 +212,24 @@ namespace Evo
             agents = new EvolutionAgent[0];
         }
 
+        internal void AddAgent(EvolutionAgent agent)
+        {
+            if(agents.Contains(agent))
+                throw new Exception("The agent you are trying to add is already apart of the group");
+
+            agents = agents.Concat(new EvolutionAgent[] { agent }).ToArray();
+            geneticAlgorithm.Population.Add(agent.DNA);
+        }
+        
+        internal void RemoveAgent(EvolutionAgent agent)
+        {
+            if(!agents.Contains(agent))
+                throw new Exception("The agent you are trying to remove is not already apart of the group");
+
+            agents = agents.Except(new EvolutionAgent[] { agent }).ToArray();
+            geneticAlgorithm.Population.Remove(agent.DNA);
+        }
+
         public int GetGeneration()
         {
             return geneticAlgorithm != null ? geneticAlgorithm.Generation : 0;

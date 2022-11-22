@@ -11,6 +11,7 @@ public class AICarController : Car
     [SerializeField] Transform leftSensor;
     [SerializeField] Transform rightSensor;
     [SerializeField] LayerMask sensorMask;
+    [SerializeField] AICarEngine engine;
 
     EvolutionGroup group;
 
@@ -20,10 +21,15 @@ public class AICarController : Car
     MeshRenderer[] meshRenderers;
     CheckpointManager checkpointManager;
 
-
     int scoreThreshold;
 
     Vector3 targetPos;
+
+    protected override void Awake()
+    {
+        base.Awake();
+        engine.Init(this);
+    }
 
     protected void Start()
     {
@@ -103,6 +109,11 @@ public class AICarController : Car
         base.FixedUpdate();
     }
 
+    public void SetTraining(bool training)
+    {
+        //agent
+    }
+
     private bool Raycast(Transform sensor, out RaycastHit hit)
     {
         return Physics.Raycast(sensor.position, sensor.forward, out hit, float.PositiveInfinity, sensorMask);
@@ -125,8 +136,7 @@ public class AICarController : Car
         agent.IsAlive = false;
     }
 
-
-    public void OnTriggerEnter(Collider other)
+    public void EngineHitTrigger(Collider other)
     {
         if (agent.DNA == null || !agent.DNA.IsTraining)
             return;
@@ -140,7 +150,7 @@ public class AICarController : Car
         }
     }
 
-    public void OnCollisionEnter(Collision collision)
+    public void EngineCollided(Collision collision)
     {
         if (agent.DNA == null || !agent.DNA.IsTraining)
             return;

@@ -45,6 +45,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   carsCanMoveBeforeRaceStart: 0
   startCountdown: 3
+  playerPrefab: {fileID: 6825957369413703457, guid: 71f6a92fa4b28584784bf78dfae3e479, type: 3}
+  aiPrefab: {fileID: 7876896538199923918, guid: 97066c5038324614697acb887966dbd2, type: 3}
+  spawnPositions: []
   OnCountdownValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -107,3 +110,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ad45edc230f8c444bf7ff2fe9812fe1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isTraining: 0
+  group: {fileID: 0}

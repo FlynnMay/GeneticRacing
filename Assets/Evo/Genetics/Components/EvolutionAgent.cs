@@ -66,6 +66,12 @@ namespace Evo
         [SerializeField]
         bool training = true;
 
+        /// <summary>
+        /// Used to check if the player is training.
+        /// </summary>
+        public bool IsTraining { get => training; private set => training = value; }
+
+
         private void Awake()
         {
             if (training) 
@@ -191,6 +197,38 @@ namespace Evo
             FieldInfo info = type.GetField("genes");
             object genes = info.GetValue(defaultDNA);
             DNA.Genes = ((IEnumerable)genes).Cast<object>().ToArray();
+        }
+        
+        /// <summary>
+        /// Adds agent to the evolution group
+        /// </summary>
+        public void AddSelfToGroup()
+        {
+            group.AddAgent(this);
+        }
+        
+        
+        /// <summary>
+        /// Adds agent to the evolution group
+        /// </summary>
+        public void RemoveSelfFromGroup()
+        {
+            group.RemoveAgent(this);
+        }
+
+
+        /// <summary>
+        /// Sets whether or not the agent is training
+        /// </summary>
+        /// <param name="_training">Should the agent be training</param>
+        public void SetTraining(bool _training)
+        {
+            training = _training;
+
+            if (training)
+                AddSelfToGroup();
+            else
+                RemoveSelfFromGroup();
         }
     }
 }

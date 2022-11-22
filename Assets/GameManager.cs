@@ -9,7 +9,7 @@ public class GameManager : MonoBehaviour
     RaceManager raceManager;
     public static GameManager Instance { get; private set; }
     public static RaceManager RaceManager { get => Instance.raceManager; }
-    public bool IsTraining { get => isTraining; set => isTraining = value; }
+    public bool IsTraining { get => isTraining || GetShouldTrain(); }
 
     private void Awake()
     {
@@ -27,6 +27,29 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         if (IsTraining)
-            group.StartEvolving();
+            StartTraining();
+    }
+
+    private void StartTraining()
+    {
+        group.InstantiateNewAgents(300);
+        
+        for (int i = 0; i < group.agents.Length; i++)
+        {
+            Evo.EvolutionAgent agent = group.agents[i];
+            agent.SetTraining(true);
+        }
+
+        group.StartEvolving();
+    }
+
+    private bool GetShouldTrain()
+    {
+        return PlayerPrefs.GetInt(GRPrefKeys.GRTraining) == 1;
+    }
+    
+    private void DeleteKey()
+    {
+        PlayerPrefs.DeleteKey(GRPrefKeys.GRTraining);
     }
 }

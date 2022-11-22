@@ -46,7 +46,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   valueGenerator: {fileID: 11400000, guid: 9f58c7812b9f8f54c9c6aaf5158f6336, type: 2}
   fitnessFunction: {fileID: 11400000, guid: 96b00314d60d0a14bb92f6284975330e, type: 2}
-  mutationRate: 0.0033333334
+  mutationRate: 0.0333
   eliteCount: 20
   evolveOnExtinction: 1
   beginOnStart: 0

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,7 +10,6 @@ public class AICarEngine : MonoBehaviour
 
     void Awake()
     {
-        controller = GetComponentInParent<AICarController>();
         rb = GetComponent<Rigidbody>();
     }
 
@@ -30,13 +30,18 @@ public class AICarEngine : MonoBehaviour
         });
     }
 
+    public void Init(AICarController _controller)
+    {
+        controller = _controller;
+    }
+
     private void OnTriggerEnter(Collider other)
     {
-        controller.OnTriggerEnter(other);
+        controller.EngineHitTrigger(other);
     }
 
     private void OnCollisionEnter(Collision collision)
     {
-        controller.OnCollisionEnter(collision);
+        controller.EngineCollided(collision);
     }
 }
