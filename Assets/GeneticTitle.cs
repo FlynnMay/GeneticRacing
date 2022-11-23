@@ -15,7 +15,7 @@ public class GeneticTitle : MonoBehaviour
 
     void Awake()
     {
-        group = GetComponent<EvolutionGroup>();
+        group ??= GetComponent<EvolutionGroup>();
         titleMesh = GetComponent<TextMeshProUGUI>();
 
         Setup();
