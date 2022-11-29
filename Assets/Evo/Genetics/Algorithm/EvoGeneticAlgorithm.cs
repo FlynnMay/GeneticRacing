@@ -149,7 +149,8 @@ namespace Evo
                     return Population[i - 1];
             }
 
-            return null;
+            // if on the off chance no parent is found, fail safe to a random parent
+            return Population[random.Next(0, Population.Count)];
         }
     }
 }
