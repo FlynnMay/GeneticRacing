@@ -8,6 +8,11 @@ namespace Evo
     {
     }
 
+    /// <summary>
+    /// Extend this class to create custom DNA Value Generators. 
+    /// Check the example class <see cref="DNAFloat01Generator"/> for more info.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public class DNAValueGenerator<T> : DNAValueGenerator
     {
         /// <summary>

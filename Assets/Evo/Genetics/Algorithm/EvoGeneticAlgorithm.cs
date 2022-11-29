@@ -7,14 +7,45 @@ namespace Evo
 {
     public class EvoGeneticAlgorithm
     {
+        /// <summary>
+        /// All the Genomes (DNA), Currently control by the genetic algorithm.
+        /// </summary>
         public List<Genome> Population { get; set; }
+
+        /// <summary>
+        /// The current generation the Genetetic Algorithm is on.
+        /// </summary>
         public int Generation { get; private set; }
+
+        /// <summary>
+        /// The best fitness of the last generation
+        /// </summary>
         public float BestFitness { get; private set; }
+
+        /// <summary>
+        /// The best genes of the last generation
+        /// </summary>
         public object[] BestGenes { get; private set; }
 
+        /// <summary>
+        /// The chance of a singular Gene in a Genome mutating
+        /// </summary>
         public float mutationRate;
+
+        /// <summary>
+        /// The provided random which is used in <see cref="ChooseParent"/>
+        /// </summary>
         Random random;
+
+        /// <summary>
+        /// The total fitness value set in <see cref="CalculateFitness"/>
+        /// </summary>
         float fitnessSum;
+
+        /// <summary>
+        /// The amount of elites in a population.
+        /// Elites are the top genomes which persisit between generations.
+        /// </summary>
         int eliteCount;
 
         public EvoGeneticAlgorithm(List<Genome> genomes, int genomeSize, Random _random, IEvolutionInstructions instructions, float _mutationRate = 0.01f, int _eliteCount = 2)
@@ -29,6 +60,9 @@ namespace Evo
             eliteCount = _eliteCount;
         }
 
+        /// <summary>
+        /// Calculates the fitness of the generation the uses the elites of the generation to build a new one.
+        /// </summary>
         public void NewGeneration()
         {
             if (Population.Count <= 0)
@@ -70,6 +104,9 @@ namespace Evo
             Generation++;
         }
 
+        /// <summary>
+        /// Instructs each <see cref="Genome"/> in the population to calculate it's fitness, and adds each fitness value to the fitness sum
+        /// </summary>
         void CalculateFitness()
         {
             fitnessSum = 0;
@@ -77,7 +114,7 @@ namespace Evo
 
             for (int i = 0; i < Population.Count; i++)
             {
-                fitnessSum += Population[i].CalaculateFitness(i);
+                fitnessSum += Population[i].CalaculateFitness();
 
                 if (Population[i].Fitness > bestGenome.Fitness)
                     bestGenome = Population[i];
@@ -87,6 +124,10 @@ namespace Evo
             BestGenes = bestGenome.Genes;
         }
 
+        /// <summary>
+        /// Roulette wheel selection, has a weighted chance to pick the genomes most fit for the job as a parent.
+        /// </summary>
+        /// <returns>A random genome from the poulation, most likely one of the most fit genomes</returns>
         Genome ChooseParent()
         {
             // Roullete wheel
@@ -112,16 +153,3 @@ namespace Evo
         }
     }
 }
-
-/*
- *  START
- *  Generate the initial population
- *  Compute fitness
- *  REPEAT
- *      Selection
- *      Crossover
- *      Mutation
- *      Compute fitness
- *  UNTIL population has converged
- *  STOP
- */

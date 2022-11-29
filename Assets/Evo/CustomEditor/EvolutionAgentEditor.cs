@@ -8,7 +8,7 @@ using UnityEditor;
 namespace Evo.EditorStyle
 {
 #if UNITY_EDITOR
-    [CustomEditor(typeof(EvolutionAgent))]
+    [CustomEditor(typeof(EvolutionAgent)), CanEditMultipleObjects]
     public class EvolutionAgentEditor : Editor
     {
         bool foldout;
@@ -17,16 +17,19 @@ namespace Evo.EditorStyle
             serializedObject.Update();
             DrawPropertiesExcluding(serializedObject, "m_Script");
 
-            EvolutionAgent agent = target as EvolutionAgent;
+            if (targets.Length == 1)
+            {
+                EvolutionAgent agent = targets[0] as EvolutionAgent;
 
-            GUILayout.Space(5);
-            if (GUILayout.Button(new GUIContent("Save DNA", "Save the DNA of an agent")))
-                agent.ExportDNA();
+                GUILayout.Space(5);
+                if (GUILayout.Button(new GUIContent("Save DNA", "Save the DNA of an agent")))
+                    agent.ExportDNA();
 
-            GUILayout.Space(5);
-            DebugInfo(agent);
-            GUILayout.Space(5);
-            FitnessProgressBar(agent);
+                GUILayout.Space(5);
+                DebugInfo(agent);
+                GUILayout.Space(5);
+                FitnessProgressBar(agent);
+            }
             serializedObject.ApplyModifiedProperties();
         }
 
