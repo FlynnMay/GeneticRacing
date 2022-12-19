@@ -67,7 +67,7 @@ public class AICarController : Car
 
         StartCoroutine(WaitForAgentDNA());
     }
-    
+
     public void SetPositionAndRotation(Vector3 pos, Quaternion rot)
     {
         engine.transform.position = pos;
@@ -213,12 +213,13 @@ public class AICarController : Car
 
     public AICarInstance ToInstance()
     {
-        return new AICarInstance(name, agent.DNA.Genes.Cast<float>().ToArray());
+        return new AICarInstance(name, agent.DNA.Genes.Cast<float>().ToArray(), agent.group.GetGeneration());
     }
 
     public void FromInstance(AICarInstance instance)
     {
         name = instance.name;
+        carName = instance.name;
         DNA<float> dna = ScriptableObject.CreateInstance<EvoDNAFloat>();
         dna.genes = instance.genes;
         agent.SetAndApplyDNA(dna);
@@ -229,11 +230,13 @@ public class AICarController : Car
 public class AICarInstance
 {
     public string name = "Ai";
+    public int generations = 0;
     public float[] genes;
 
-    public AICarInstance(string name, float[] ganes)
+    public AICarInstance(string name, float[] genes, int generations)
     {
         this.name = name;
-        this.genes = ganes;
+        this.genes = genes;
+        this.generations = generations;
     }
 }

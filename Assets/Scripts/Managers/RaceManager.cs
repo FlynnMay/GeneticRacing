@@ -49,13 +49,14 @@ public class RaceManager : MonoBehaviour
 
             List<AICarInstance> options = DNAExporter.Deserialise();
             AICarController aiCarPrefab = aiPrefab.GetComponent<AICarController>();
-            for (int i = 1; i < spawnPositions.Length; i++)
+            int[] validIndicies = GetValidAiIndicies().Take(spawnPositions.Length - 1).ToArray();
+            for (int i = 0; i < validIndicies.Length; i++)
             {
                 AICarController aiCar = Instantiate(aiCarPrefab);
-                Transform t = spawnPositions[i];
+                Transform t = spawnPositions[i + 1];
                 aiCar.SetPositionAndRotation(t.position, t.rotation);
                 aiCar.FindAgent();
-                aiCar.FromInstance(options[Random.Range(0, options.Count)]);
+                aiCar.FromInstance(options[validIndicies[i]]);
                 cars.Add(aiCar);
             }
         }
@@ -64,6 +65,18 @@ public class RaceManager : MonoBehaviour
 
         foreach (Car car in cars)
             car.CanMove = carsCanMoveBeforeRaceStart;
+    }
+
+    private static int[] GetValidAiIndicies()
+    {
+        int count = PlayerPrefs.GetInt(GRPrefKeys.GRIndiciesCount);
+
+        int[] arr = new int[count];
+        for (int i = 0; i < count; i++)
+        {
+            arr[i] = PlayerPrefs.GetInt((GRPrefKeys.GRIndicies + i).ToString());
+        }
+        return arr;
     }
 
     public void StartRace()

@@ -10,6 +10,7 @@ public class AISpectator : MonoBehaviour
 {
     [SerializeField] FollowAllCars followCars;
     [SerializeField] TMPro.TMP_InputField inputField;
+    [SerializeField] TMPro.TMP_InputField nameInputField;
     int aiIndex = -1;
     Car car;
 
@@ -60,6 +61,7 @@ public class AISpectator : MonoBehaviour
     public void Save()
     {
         AICarController carToSave = (car as AICarController);
+        carToSave.name = nameInputField.text;
         
         if (carToSave == null)
             return;

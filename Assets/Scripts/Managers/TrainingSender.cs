@@ -13,4 +13,6 @@ public class TrainingSender : MonoBehaviour
 public static class GRPrefKeys
 {
     public const string GRTraining = "GR.T";
+    public const string GRIndicies = "GR.I";
+    public const string GRIndiciesCount = "GR.ICount";
 }

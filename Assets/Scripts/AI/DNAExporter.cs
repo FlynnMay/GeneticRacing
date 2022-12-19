@@ -12,6 +12,11 @@ public static class DNAExporter
     {
         AICarInstance carInstance = car.ToInstance();
 
+        Serialise(carInstance);
+    }
+    
+    public static void Serialise(this AICarInstance carInstance)
+    {
         List<AICarInstance> carInstances = Deserialise();
         carInstances.Add(carInstance);
 
