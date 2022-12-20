@@ -24,7 +24,7 @@ public class ActiveAISetter : MonoBehaviour
                 53.66473388671875f,
                 2.0492255687713625f,
                 4.754626750946045f
-            }, 12);
+            }, 12, 0);
 
             demo1.Serialise();
             allAI.Add(demo1);

@@ -13,6 +13,7 @@ public class AIInformationWriter : MonoBehaviour
     [SerializeField] Button button;
     [SerializeField] TMP_Text label;
     [SerializeField] TMP_Text desc;
+    [SerializeField] Sprite[] sprites;
     bool activeAI = false;
 
     private void OnEnable()
@@ -38,6 +39,7 @@ public class AIInformationWriter : MonoBehaviour
         }
         desc.text = $"Generations: {ai.generations} \n" +
             $"Genes: {genesString}";
+        previewImage.sprite = sprites[ai.colourIndex];
     }
 
     private void UsingIconToggleDisplay(bool isUsing)

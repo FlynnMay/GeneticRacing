@@ -29,11 +29,13 @@ public class AICarController : Car
     int scoreThreshold;
 
     Vector3 targetPos;
+    CarColour colour;
 
     protected override void Awake()
     {
         base.Awake();
         engine.Init(this);
+        colour = GetComponentInChildren<CarColour>();
     }
 
     protected void Start()
@@ -213,7 +215,7 @@ public class AICarController : Car
 
     public AICarInstance ToInstance()
     {
-        return new AICarInstance(name, agent.DNA.Genes.Cast<float>().ToArray(), agent.group.GetGeneration());
+        return new AICarInstance(name, agent.DNA.Genes.Cast<float>().ToArray(), agent.group.GetGeneration(), colour.GetIndex());
     }
 
     public void FromInstance(AICarInstance instance)
@@ -223,6 +225,7 @@ public class AICarController : Car
         DNA<float> dna = ScriptableObject.CreateInstance<EvoDNAFloat>();
         dna.genes = instance.genes;
         agent.SetAndApplyDNA(dna);
+        colour.SetColourFromIndex(instance.colourIndex);
     }
 }
 
@@ -232,11 +235,13 @@ public class AICarInstance
     public string name = "Ai";
     public int generations = 0;
     public float[] genes;
+    public int colourIndex = 0;
 
-    public AICarInstance(string name, float[] genes, int generations)
+    public AICarInstance(string name, float[] genes, int generations, int colourIndex)
     {
         this.name = name;
         this.genes = genes;
         this.generations = generations;
+        this.colourIndex = colourIndex;
     }
 }
